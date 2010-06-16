@@ -280,14 +280,16 @@ package org.flixel
 			var soundPrefs:FlxSave;
 
 			//Frame timing
-			var ems:uint = mark-_total;
+			/*var ems:uint = mark-_total;
 			_elapsed = ems/1000;
 			_console.mtrTotal.add(ems);
 			_total = mark;
 			FlxG.elapsed = _elapsed;
 			if(FlxG.elapsed > FlxG.maxElapsed)
 				FlxG.elapsed = FlxG.maxElapsed;
-			FlxG.elapsed *= FlxG.timeScale;
+			FlxG.elapsed *= FlxG.timeScale;*/
+			
+			FlxG.elapsed = _elapsed = 1; //hacky determinism fix
 			
 			//Sound tray crap
 			if(_soundTray != null)

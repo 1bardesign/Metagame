@@ -70,13 +70,13 @@ package com.game.Metagame
 			
 			//GAME LOGIC HERE
 			
+			super.update(); //I need to call this earlier than collide to stop "squishy" intersections.
+			
 			//collisions with environment
 			FlxU.collide(_tiles,_player);
 			// FOR WHEN WE NEED OBJ-OBJ INTERACTION WITHOUT COLLISION
 			//FlxU.overlap(_objects,_objects,overlapped);
 			
-			super.update();
-
 		}
 		
 		protected function overlapped(Object1:FlxObject,Object2:FlxObject):void

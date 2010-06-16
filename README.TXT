@@ -16,9 +16,20 @@ CURRENT KEYBINDINGS:
 	left arrow  : walk left
 	right arrow : walk right
 	up		: jump
+	space	: crouch
 	x		: used to enter the game in combination w/ z.
 
 CHANGELOG --------------------------------------------
+
+ +-----------------------------------
+ | v0.0.3 - DETERMINISM + PHYSICS - MATT
+ +-----------------------------------
+ 
+-logic is now executed on a deterministic
+	per-frame basis (hacky flixel src mod)
+-player physics and control updated
+-crouching added
+-collision code moved
 
  +-----------------------------------
  | v0.0.2 - LEVEL + SCREEN OBJECTS - GETI

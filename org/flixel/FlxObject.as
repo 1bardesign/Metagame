@@ -267,7 +267,8 @@ package org.flixel
 			if(solid)
 				refreshHulls();
 			onFloor = false;
-			var vc:Number;
+			
+			/*var vc:Number;
 
 			vc = (FlxU.computeVelocity(angularVelocity,angularAcceleration,angularDrag,maxAngular) - angularVelocity)/2;
 			angularVelocity += vc; 
@@ -300,13 +301,23 @@ package org.flixel
 			velocity.y += vc;
 			
 			x += xd;
-			y += yd;
+			y += yd;*/
+			
+			//the following is a simplification because compensations based on FlxG.elapsed are no longer needed
+			velocity.x += acceleration.x;
+			velocity.y += acceleration.y;
+			if(Math.abs(velocity.x)>maxVelocity.x)
+				velocity.x = velocity.x>0?maxVelocity.x:-maxVelocity.x;
+			if(Math.abs(velocity.y)>maxVelocity.y)
+				velocity.y = velocity.y>0?maxVelocity.y:-maxVelocity.y;
+			x += velocity.x;
+			y += velocity.y;
 			
 			//Update collision data with new movement results
 			if(!solid)
 				return;
-			colVector.x = xd;
-			colVector.y = yd;
+			colVector.x = velocity.x; //xd; //I also had to change these
+			colVector.y = velocity.y; //yd;
 			colHullX.width += ((colVector.x>0)?colVector.x:-colVector.x);
 			if(colVector.x < 0)
 				colHullX.x += colVector.x;

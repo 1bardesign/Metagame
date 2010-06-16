@@ -5,11 +5,19 @@ package com.game.Metagame
 	public class Player extends FlxSprite
 	{
 		[Embed(source="../../../data/robot.png")] private var ImgPlayer:Class;
-		private var _jumpPower:int;
-		private var _jumpTime:Number;
+		
+		private var _keys:Object;
+		private var _inputThrust:FlxPoint;
+		private var _airThrustMultiplier:Number;
+		private var _crouching:Boolean;
+		private var _crouchThrustMultiplier:Number;
+		private var _crouchJumpMultiplier:Number;
+		private var _groundDrag:Number;
+		private var _airDrag:Number;
 		private var _jumping:Boolean;
-		private var _up:Boolean;
-		private var _down:Boolean;
+		private var _jumpTimer:Number; //variable that times the length of each jump
+		private var _jumpDuration:Number;
+		private var _gravity:Number; //should we have gravity be global or per-object?
 		private var _gibs:FlxEmitter; //hooray! maybe use more than one, for more cinematic deaths.
 		
 		public function Player(X:int,Y:int)
@@ -23,63 +31,81 @@ package com.game.Metagame
 			offset.x = 9;
 			offset.y = 2;
 			
+			//input. This should be expanded later,
+			//I'm just doing it like this with a generic object so I don't need to go through and find all explicit references later.
+			_keys = new Object();
+			_keys.left="A";
+			_keys.right="D"
+			_keys.jump="W";
+			_keys.crouch="SPACE";
+			
 			//basic player physics
-			var runSpeed:uint = 150;
-			drag.x = runSpeed*5;
-			acceleration.y = 480;
-			_jumpPower = 135;
-			_jumpTime = 0
-			maxVelocity.x = runSpeed;
-			maxVelocity.y = 1000;
+			_inputThrust = new FlxPoint(2/3,3); //running and jump input thrust
+			_airThrustMultiplier = 1/2;
+			_crouchThrustMultiplier = 0.3;
+			_crouchJumpMultiplier = 0.5;
+			_groundDrag = 0.8;
+			_airDrag = 0.9;
+			//1-gD=(1-aD)/aTM should roughly hold for smooth running jumps.
+			_jumpDuration = 30
+			_gravity = 0.3
+			maxVelocity.x = 10;
+			maxVelocity.y = 10;
 			
 			//animations
 			addAnimation("idle", [0]); //SECOND FRAME LOOKS PFF LAME, WILL NEED EITHER 3 FRAMES OR NO ANIM
-			addAnimation("run", [2, 3, 4, 5, 6, 7, 8], 17);
-			addAnimation("jumpup", [3,4],8,false);
-			addAnimation("jumpdown", [6,7],8,false);
+			addAnimation("run", [2, 3, 4, 5, 6, 7, 8], 0.2);
+			addAnimation("jumpup", [3,4],0.07,false);
+			addAnimation("jumpdown", [6,7],0.07,false);
+			addAnimation("crouch", [10]);
 		}
 		
 		override public function update():void
 		{
 			//MOVEMENT
-			acceleration.x = 0;
-			if(FlxG.keys.LEFT)
+
+			//drag
+			velocity.x *= onFloor?_groundDrag:_airDrag; //technically, this should be based on the force of gravity, but that would feel weird.
+			//velocity.y *= onFloor?_groundDrag:_airDrag;
+			//surface friction for the vertical component seems unfun.
+			//for now I've disabled vertical drag totally because it caused problems with variable-height jumping.
+			
+			//input
+			_crouching = FlxG.keys.pressed(_keys.crouch);
+			var thrustDir:int = int(FlxG.keys.pressed(_keys.right))-int(FlxG.keys.pressed(_keys.left)); //1 is right, -1 is left.
+			if (thrustDir != 0)
 			{
-				facing = LEFT;
-				if (_jumping)
-					acceleration.x -= drag.x / 2;
-				else
-					acceleration.x -= drag.x;
+				facing = thrustDir>0?RIGHT:LEFT;
+				acceleration.x += thrustDir*_inputThrust.x;
+				if (!onFloor)
+					acceleration.x *= _airThrustMultiplier; //less thrust in the air
+				if(_crouching)
+					acceleration.x *= _crouchThrustMultiplier; //less thrust while crouching
 			}
-			else if(FlxG.keys.RIGHT)
+			if(FlxG.keys.justPressed(_keys.jump) && onFloor)
 			{
-				facing = RIGHT;
-				if (_jumping)
-					acceleration.x += drag.x / 2;
-				else
-					acceleration.x += drag.x;
-			}
-			if(FlxG.keys.justPressed("UP") && onFloor)
-			{
-				velocity.y = -_jumpPower;
-				_jumpTime = 3;
+				acceleration.y -= _inputThrust.y*(_crouching ? _crouchJumpMultiplier : 1);
+				_jumpTimer = 1; //after this timer elapses (gets to zero), the player can no longer control the vertical of the jump
 				_jumping = true;
-			}
-			else if (FlxG.keys.pressed("UP") && _jumping)
-			{
-				velocity.y += -_jumpPower*(2*_jumpTime^3)*FlxG.elapsed;
 			}
 			if (_jumping) //tick down and such
 			{
-				_jumpTime -= FlxG.elapsed*10;
-				if (FlxG.keys.justReleased("UP") || _jumpTime < 0)
+				_jumpTimer -= 1/_jumpDuration;
+				if (FlxG.keys.justReleased(_keys.jump) || _jumpTimer < 0)
 					_jumping = false;
-				}
-			
-			//TODO: Aiming?
+			}
+			if (FlxG.keys.pressed(_keys.jump) && _jumping)
+			{
+				acceleration.y -= _gravity*Math.pow(_jumpTimer,0.7); //_inputThrust.y*_jumpTimer^2; //this is unphysical. Its purpose is to allow variable height jumps.
+			}
+			//TODO: Aiming
 			
 			//ANIMATION
-			if(velocity.y < 0)
+			if(_crouching)
+			{
+				play("crouch");
+			}
+			else if(velocity.y < 0)
 			{
 				play("jumpup");
 			}
@@ -87,7 +113,7 @@ package com.game.Metagame
 			{
 				play("jumpdown");
 			}
-			else if(velocity.x == 0)
+			else if(thrustDir == 0)
 			{
 				play("idle");
 			}
@@ -102,6 +128,11 @@ package com.game.Metagame
 			//}
 			//UPDATE POSITION AND ANIMATION
 			super.update();
+			
+			acceleration.x = 0;
+			acceleration.y = _gravity;
+			//this acceleration reset means player.update() must come after every other object updates (which would make sense, anyway).
+			//in order to prevent this from being required we'd have to have separate impulse variables.
 		}
 		
 		override public function hitBottom(Contact:FlxObject,Velocity:Number):void
@@ -110,17 +141,8 @@ package com.game.Metagame
 				//FlxG.play(SndLand); ---------------------------------------------------ADD LANDING SOUND
 			onFloor = true;
 			_jumping = false;
-			_jumpTime = 0;
+			_jumpTimer = 0;
 			return super.hitBottom(Contact,Velocity);
 		}
-		
-		override public function hitSide(Contact:FlxObject,Velocity:Number):void
-		{
-			if (velocity.x > 30)
-				velocity.x = -velocity.x*(2/3);
-			else
-				super.hitSide(Contact,Velocity);
-		}
-		
 	}
 }
