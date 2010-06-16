@@ -26,7 +26,7 @@ package com.game.Metagame
 			super(X,Y);
 			loadGraphic(ImgPlayer,true,true,32,32);
 			
-			//bounding box tweaks
+			//set bounding box
 			width = 14;
 			height = 25;
 			offset.x = 9;
@@ -44,7 +44,7 @@ package com.game.Metagame
 			_inputThrust = new FlxPoint(2/3,3); //running and jump input thrust
 			_airThrustMultiplier = 1/2;
 			_crouchThrustMultiplier = 0.3;
-			_crouchJumpMultiplier = 0.5;
+			_crouchJumpMultiplier = 1//0.5;
 			_groundDrag = 0.8;
 			_airDrag = 0.9;
 			//1-gD=(1-aD)/aTM should roughly hold for smooth running jumps.
@@ -72,7 +72,28 @@ package com.game.Metagame
 			//for now I've disabled vertical drag totally because it caused problems with variable-height jumping.
 			
 			//input
+						
+			if(_crouching != FlxG.keys.pressed(_keys.crouch))
+			{
+				//we're switching states of crouchingness
+				//this will be inadequate if we add more states
+				
+				//adjust bounding box
+				if(_crouching)
+				{
+					height = 25;
+					offset.y = 2;
+					y -= 10;
+				}
+				else
+				{
+					height = 15;
+					offset.y = 12;
+					y += 10;
+				}
+			}
 			_crouching = FlxG.keys.pressed(_keys.crouch);
+			
 			var thrustDir:int = int(FlxG.keys.pressed(_keys.right))-int(FlxG.keys.pressed(_keys.left)); //1 is right, -1 is left.
 			if (thrustDir != 0)
 			{
