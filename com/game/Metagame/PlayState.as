@@ -48,6 +48,15 @@ package com.game.Metagame
 			
 			//ADD PLAYER TO THE GAME
 			_player = new Player(100,100);
+			_player.collideVsTiles = function():void
+			{
+				//collide vs environment
+				FlxU.collide(_tiles,_player);
+				//update() contains both integration and rendering
+				//and I need to put this between the two
+				//so I need to pass this to the player
+				//so the player can call this in its own update()
+			};
 			add(_player);
 			
 			//unfade
@@ -71,12 +80,6 @@ package com.game.Metagame
 			//GAME LOGIC HERE
 			
 			super.update(); //I need to call this earlier than collide to stop "squishy" intersections.
-			
-			//collisions with environment
-			FlxU.collide(_tiles,_player);
-			// FOR WHEN WE NEED OBJ-OBJ INTERACTION WITHOUT COLLISION
-			//FlxU.overlap(_objects,_objects,overlapped);
-			
 		}
 		
 		protected function overlapped(Object1:FlxObject,Object2:FlxObject):void

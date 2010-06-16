@@ -19,6 +19,7 @@ package com.game.Metagame
 		private var _jumpDuration:Number;
 		private var _gravity:Number; //should we have gravity be global or per-object?
 		private var _gibs:FlxEmitter; //hooray! maybe use more than one, for more cinematic deaths.
+		public var collideVsTiles:Function;
 		
 		public function Player(X:int,Y:int)
 		{
@@ -47,8 +48,8 @@ package com.game.Metagame
 			_groundDrag = 0.8;
 			_airDrag = 0.9;
 			//1-gD=(1-aD)/aTM should roughly hold for smooth running jumps.
-			_jumpDuration = 30
-			_gravity = 0.3
+			_jumpDuration = 30;
+			_gravity = 0.3;
 			maxVelocity.x = 10;
 			maxVelocity.y = 10;
 			
@@ -100,6 +101,14 @@ package com.game.Metagame
 			}
 			//TODO: Aiming
 			
+			super.updateMotion();
+			collideVsTiles();
+			
+			acceleration.x = 0;
+			acceleration.y = _gravity;
+			//this acceleration reset means player.update() must come after every other object updates (which would make sense, anyway).
+			//in order to prevent this from being required we'd have to have separate impulse variables.
+			
 			//ANIMATION
 			if(_crouching)
 			{
@@ -126,13 +135,10 @@ package com.game.Metagame
 			//{
 				//do interaction stuff here
 			//}
-			//UPDATE POSITION AND ANIMATION
-			super.update();
 			
-			acceleration.x = 0;
-			acceleration.y = _gravity;
-			//this acceleration reset means player.update() must come after every other object updates (which would make sense, anyway).
-			//in order to prevent this from being required we'd have to have separate impulse variables.
+			//UPDATE ANIMATION
+			super.updateAnimation();
+			super.updateFlickering();
 		}
 		
 		override public function hitBottom(Contact:FlxObject,Velocity:Number):void
