@@ -21,13 +21,14 @@ package com.game.Metagame
 							//Geti: i think per object, but there should be a normal value of it..
 							//i suppose we could use a scalar for it, like have it constant * objgravscalar
 		private var _gibs:FlxEmitter; //hooray! maybe use more than one, for more cinematic deaths.
+		public var collideVsTiles:Function;
 		
 		public function Player(X:int,Y:int)
 		{
 			super(X,Y);
 			loadGraphic(ImgPlayer,true,true,32,32);
 			
-			//bounding box tweaks
+			//set bounding box
 			width = 14;
 			height = 25;
 			offset.x = 9;
@@ -45,12 +46,12 @@ package com.game.Metagame
 			_inputThrust = new FlxPoint(2/3,3); //running and jump input thrust
 			_airThrustMultiplier = 1/2;
 			_crouchThrustMultiplier = 0.3;
-			_crouchJumpMultiplier = 0.5;
+			_crouchJumpMultiplier = 1//0.5;
 			_groundDrag = 0.8;
 			_airDrag = 0.9;
 			//1-gD=(1-aD)/aTM should roughly hold for smooth running jumps.
-			_jumpDuration = 30
-			_gravity = 0.3
+			_jumpDuration = 30;
+			_gravity = 0.3;
 			maxVelocity.x = 10;
 			maxVelocity.y = 10;
 			
@@ -73,7 +74,28 @@ package com.game.Metagame
 			//for now I've disabled vertical drag totally because it caused problems with variable-height jumping.
 			
 			//input
+						
+			if(_crouching != FlxG.keys.pressed(_keys.crouch))
+			{
+				//we're switching states of crouchingness
+				//this will be inadequate if we add more states
+				
+				//adjust bounding box
+				if(_crouching)
+				{
+					height = 25;
+					offset.y = 2;
+					y -= 10;
+				}
+				else
+				{
+					height = 15;
+					offset.y = 12;
+					y += 10;
+				}
+			}
 			_crouching = FlxG.keys.pressed(_keys.crouch);
+			
 			var thrustDir:int = int(FlxG.keys.pressed(_keys.right))-int(FlxG.keys.pressed(_keys.left)); //1 is right, -1 is left.
 			if (thrustDir != 0)
 			{
@@ -102,6 +124,14 @@ package com.game.Metagame
 			}
 			//TODO: Aiming
 			
+			super.updateMotion();
+			collideVsTiles();
+			
+			acceleration.x = 0;
+			acceleration.y = _gravity;
+			//this acceleration reset means player.update() must come after every other object updates (which would make sense, anyway).
+			//in order to prevent this from being required we'd have to have separate impulse variables.
+			
 			//ANIMATION
 			if(_crouching)
 			{
@@ -128,13 +158,10 @@ package com.game.Metagame
 			//{
 				//do interaction stuff here
 			//}
-			//UPDATE POSITION AND ANIMATION
-			super.update();
 			
-			acceleration.x = 0;
-			acceleration.y = _gravity;
-			//this acceleration reset means player.update() must come after every other object updates (which would make sense, anyway).
-			//in order to prevent this from being required we'd have to have separate impulse variables.
+			//UPDATE ANIMATION
+			super.updateAnimation();
+			super.updateFlickering();
 		}
 		
 		override public function hitBottom(Contact:FlxObject,Velocity:Number):void
