@@ -18,6 +18,8 @@ package com.game.Metagame
 		private var _jumpTimer:Number; //variable that times the length of each jump
 		private var _jumpDuration:Number;
 		private var _gravity:Number; //should we have gravity be global or per-object?
+							//Geti: i think per object, but there should be a normal value of it..
+							//i suppose we could use a scalar for it, like have it constant * objgravscalar
 		private var _gibs:FlxEmitter; //hooray! maybe use more than one, for more cinematic deaths.
 		
 		public function Player(X:int,Y:int)

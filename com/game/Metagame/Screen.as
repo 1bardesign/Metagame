@@ -19,11 +19,11 @@ package com.game.Metagame
 		public var _tiles:FlxGroup;
 		public var _objects:FlxGroup;
 		
-		public function Screen(data:String, level:Level, position:String)
+		public function Screen(data:String, level:Level, position:Array)
 		{
+			super();
 			//------------PREPROCESSING THE DATA--------------------------------
 			//DATA FORMAT: [tiles][objects][OTHER STUFF NEED TO FIGURE FORMAT LATER]
-			//POSITION FORMAT: [x|y|z]
 			/* hooray! we get to do some fun processing now!
 			 * >_<; boring rubbish, but it's just string stuff anyway. */
 			//the data, in case we need it for something later.
@@ -34,14 +34,16 @@ package com.game.Metagame
 			/* splitting it into useful chunks
 			 * they're separated by [] */
 			//the screen's tiles
-			var mapstring:String;
+			var mapstring:String; //just a helper
 			n1 = data.indexOf("[",0) + 1;
 			n2 = data.indexOf("]",n1);
 			mapstring = data.slice(n1,n2);
 			//the screen's objects
 			n1 = n2+1;
 			n2 = data.indexOf("]",n1);
-			_objects = data.slice(n1,n2);
+			_objectstring = data.slice(n1,n2);
+			//get the position array
+			_position = position;
 			//-----------------------DONE--------------------------------------
 			
 			//-------TILE PROCESSING----------------------------
@@ -53,12 +55,13 @@ package com.game.Metagame
 			_tilestring = "";
 			//hooray, some iteration -_-
 			//map is 25x18 for the record.
-			for(i=0;i-1<mapstring.length/18;i++) {
-			for(j=0;j<25;j++) 
+			for (var i:Number=0;i-1<mapstring.length/18;i++) {
+			for (var j:Number=0;j<25;j++) 
 			{
-				_tilestring += mapstring.chatAt(((i)*25)+j) + ",";
+				//put some processing in here once we're using more than 1 and 0
+				_tilestring += mapstring.charAt(((i)*25)+j) + ",";
 			}
-			_tilestring += "\n"
+			_tilestring += "\n";
 			}
 			var tilemap:FlxTilemap;
 			tilemap = new FlxTilemap;
@@ -71,9 +74,8 @@ package com.game.Metagame
 			//OBJECT PROCESSING HERE
 			_objects = new FlxGroup();
 			//--------------------------------------------------
-			
-			super();
-			
+			add(_objects);
+			add(_tiles);
 		}
 		
 		override public function update():void

@@ -11,47 +11,23 @@ package com.game.Metagame
 		//TODO SOUNDS
 		
 		//VARIABLES
-		public var _player:Player;
-		public var _blocks:FlxGroup;
-		public var _tiles:FlxTilemap;
-		public var _tilemap:String;
+		public var _level:Level;
 		
 		override public function create():void
 		{
-			_tilemap = "1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1\n1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1\n1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1\n1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1\n1,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1\n1,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,1,1\n1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1\n1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1\n1,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1\n1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1\n1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1\n1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1\n1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1\n1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1\n1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,1\n1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,1\n1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"
+			var data:String = "#test level#geti#1|1|1#11111111111111111111111111000000000000000000000001100000000000000000000000110001100000000000000000011000111110000000000001111100011110000000011000011110000000000000011100000011000000000000000000000001100000011111100000000000111100001111111111110000011100000111111111111000001100000000000000000000000110011100000000000000011111000000000000000111111111100000000000000010001111111111000000000001000111111111111111111111111111111#100|100|1|1|1#";
 			
 			//TODO: SCREENCHANGING
-			//TODO: MAP FORMAT & LOADING FROM OTHER PLACES
-			
-				//load map ?
-				/* map format: #name#author#x#y#tiles|objects#
-				 * just like n, but with x and y dimensions for non-screensize levels
-				 * < screensize levels should otherwise be filled with tiles */
+			//TODO: LOADING FROM OTHER PLACES
 			
 			//no mouse in game
 			FlxG.mouse.hide();
 			
-			//DUMMY MAP LOADING
-			
-			_blocks = new FlxGroup();
-			
-			_tiles = new FlxTilemap();
-			_tiles.collideIndex = 1;
-			_tiles.loadMap(_tilemap,ImgTiles,16);
-			_blocks.add(_tiles);
-			add(_tiles);
-			_tiles = new FlxTilemap();
-			_tiles.collideIndex = 1;
-			_tiles.loadMap(_tilemap,ImgTiles,16);
-			_blocks.add(_tiles);
-			add(_tiles);
-			
-			//ADD PLAYER TO THE GAME
-			_player = new Player(100,100);
-			add(_player);
+			_level = new Level(data);
+			add(_level);
 			
 			//unfade
-			FlxG.flash.start(0xff000000,0.5);
+			//FlxG.flash.start(0xff000000,0.5);
 			
 			//track the number of plays in a save
 			var save:FlxSave = new FlxSave();
@@ -67,16 +43,8 @@ package com.game.Metagame
 
 		override public function update():void
 		{
-			
 			//GAME LOGIC HERE
-			
-			super.update(); //I need to call this earlier than collide to stop "squishy" intersections.
-			
-			//collisions with environment
-			FlxU.collide(_tiles,_player);
-			// FOR WHEN WE NEED OBJ-OBJ INTERACTION WITHOUT COLLISION
-			//FlxU.overlap(_objects,_objects,overlapped);
-			
+			super.update(); //I need to call this earlier than collide to stop "squishy" intersections.	
 		}
 		
 		protected function overlapped(Object1:FlxObject,Object2:FlxObject):void

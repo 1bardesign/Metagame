@@ -11,7 +11,7 @@ package {
 		{
 			super(400,300,MenuState,2);
 			FlxState.bgColor = 0xff888888;
-			useDefaultHotKeys = true;
+			useDefaultHotKeys = false;
 		}
 	}
 }

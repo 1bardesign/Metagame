@@ -22,6 +22,14 @@ CURRENT KEYBINDINGS:
 CHANGELOG --------------------------------------------
 
  +-----------------------------------
+ | v0.0.4a - MUCH BUGS - GETI
+ +-----------------------------------
+ 
+-level and screen objects broken - ARRAYS NEED WORK
+-playstate _should_ work once the levels are there
+-still need to do movement between screens
+
+ +-----------------------------------
  | v0.0.3 - DETERMINISM + PHYSICS - MATT
  +-----------------------------------
  
