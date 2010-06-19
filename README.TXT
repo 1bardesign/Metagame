@@ -15,9 +15,8 @@ need to work out.
 CURRENT KEYBINDINGS:
 	left arrow  : walk left
 	right arrow : walk right
-	up		: jump
-	space	: crouch
-	x		: used to enter the game in combination w/ z.
+	Z	: jump
+	X	: crouch
 
 CHANGELOG --------------------------------------------
 
