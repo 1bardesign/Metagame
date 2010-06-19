@@ -22,6 +22,14 @@ CURRENT KEYBINDINGS:
 CHANGELOG --------------------------------------------
 
  +-----------------------------------
+ | v0.0.4 - WORKING LEVELS! BUGS - GETI
+ +-----------------------------------
+ 
+-level and screen objects fixed!
+-player collision gimped
+-still need to do movement between screens
+
+ +-----------------------------------
  | v0.0.4a - MUCH BUGS - GETI
  +-----------------------------------
  

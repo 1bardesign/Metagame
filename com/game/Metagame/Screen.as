@@ -67,7 +67,7 @@ package com.game.Metagame
 			tilemap = new FlxTilemap;
 			tilemap.collideIndex = 1;
 			tilemap.loadMap(_tilestring,ImgTiles,16);
-			_tiles.add(_tiles);
+			_tiles.add(tilemap); //I NEED MY EYES CHECKED WAS ADDING _TILES TO _TILES FFFUU--
 			//--------------------------------------------------
 			
 			//-------OBJECT PROCESSING--------------------------
@@ -81,8 +81,13 @@ package com.game.Metagame
 		override public function update():void
 		{
 			FlxU.collide(_tiles,_objects);
-			FlxU.collide(_objects,_objects);
+			FlxU.overlap(_objects,_objects, overlapped); //can do specific collision if we need
 			super.update();
+		}
+		
+		protected function overlapped(Object1:FlxObject,Object2:FlxObject):void
+		{
+			//CALLED WHEN SHIT OVERLAPS
 		}
 		
 	}

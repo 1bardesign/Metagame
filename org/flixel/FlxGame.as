@@ -289,7 +289,7 @@ package org.flixel
 				FlxG.elapsed = FlxG.maxElapsed;
 			FlxG.elapsed *= FlxG.timeScale;*/
 			
-			FlxG.elapsed = _elapsed = 1; //hacky determinism fix
+			FlxG.elapsed = _elapsed = 1; //hacky determinism fix //THIS BREAKS TIMERS
 			
 			//Sound tray crap
 			if(_soundTray != null)

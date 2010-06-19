@@ -56,8 +56,8 @@ package com.game.Metagame
 			//TODO: A BUTTON MENU
 			if(FlxG.keys.Z && FlxG.keys.X)
 			{
-				FlxG.flash.start(0xffffffff,0.5);
-				FlxG.fade.start(0xff000000,1,onFade);
+				FlxG.flash.start(0xffffffff,20);
+				FlxG.fade.start(0xff000000,40,onFade); //this is in updates now
 			}
 
 			super.update();

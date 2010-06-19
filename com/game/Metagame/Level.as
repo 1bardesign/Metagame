@@ -85,12 +85,12 @@ package com.game.Metagame
 			
 			//update the current screen
 			
-			_curscreen = _screenArray[_pStartPos[2]][_pStartPos[3]][_pStartPos[4]];
+			_curscreen = _screenArray[_pStartPos[2]-1][_pStartPos[3]-1][_pStartPos[4]-1];
 			
 			//--------PLAYER
 			
 			_player = new Player(_pStartPos[0],_pStartPos[1]);
-			_curscreen.add(_player); //add it to the screen!
+			_curscreen._objects.add(_player); //add it to the screen's objects!
 			//-----------------------DONE--------------------------------------
 			
 		}
@@ -103,7 +103,8 @@ package com.game.Metagame
 		
 		override public function update():void
 		{
-			super.update();
+			_curscreen.update(); //can be extended later
+			_player.update();
 		}
 		
 	}

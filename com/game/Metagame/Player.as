@@ -26,13 +26,13 @@ package com.game.Metagame
 		public function Player(X:int,Y:int)
 		{
 			super(X,Y);
-			loadGraphic(ImgPlayer,true,true,32,32);
+			loadGraphic(ImgPlayer,true,true,40,40);
 			
 			//set bounding box
-			width = 14;
-			height = 25;
-			offset.x = 9;
-			offset.y = 2;
+			width = 15;
+			height = 30;
+			offset.x = 12;
+			offset.y = 4;
 			
 			//input. This should be expanded later,
 			//I'm just doing it like this with a generic object so I don't need to go through and find all explicit references later.
@@ -46,9 +46,9 @@ package com.game.Metagame
 			
 			//basic player physics
 			_inputThrust = new FlxPoint(2/3,3); //running and jump input thrust
-			_airThrustMultiplier = 1/2;
+			_airThrustMultiplier = 0.5;
 			_crouchThrustMultiplier = 0.3;
-			_crouchJumpMultiplier = 1//0.5;
+			_crouchJumpMultiplier = 0.5; //don't know what happened here, I don't rememeber touching it. Back to 0.5
 			_groundDrag = 0.8;
 			_airDrag = 0.9;
 			//1-gD=(1-aD)/aTM should roughly hold for smooth running jumps.
@@ -58,11 +58,11 @@ package com.game.Metagame
 			maxVelocity.y = 10;
 			
 			//animations
-			addAnimation("idle", [0]); //SECOND FRAME LOOKS PFF LAME, WILL NEED EITHER 3 FRAMES OR NO ANIM
-			addAnimation("run", [2, 3, 4, 5, 6, 7, 8], 0.2);
-			addAnimation("jumpup", [3,4],0.07,false);
+			addAnimation("idle", [0]);
+			addAnimation("run", [1, 2, 3, 5, 6, 7], 0.2);
+			addAnimation("jumpup", [2,3],0.07,false);
 			addAnimation("jumpdown", [6,7],0.07,false);
-			addAnimation("crouch", [10]);
+			addAnimation("crouch", [4]);
 		}
 		
 		override public function update():void
@@ -85,15 +85,15 @@ package com.game.Metagame
 				//adjust bounding box
 				if(_crouching)
 				{
-					height = 25;
-					offset.y = 2;
+					height = 30;
+					offset.y = 4;
 					y -= 10;
 				}
 				else
 				{
 					height = 15;
-					offset.y = 12;
-					y += 10;
+					offset.y = 20;
+					y += 16;
 				}
 			}
 			_crouching = FlxG.keys.pressed(_keys.crouch);
@@ -127,7 +127,7 @@ package com.game.Metagame
 			//TODO: Aiming
 			
 			super.updateMotion();
-			collideVsTiles();
+			//collideVsTiles();
 			
 			acceleration.x = 0;
 			acceleration.y = _gravity;
@@ -155,11 +155,6 @@ package com.game.Metagame
 			{
 				play("run");
 			}
-			//interaction
-			//if(FlxG.keys.justPressed("C"))
-			//{
-				//do interaction stuff here
-			//}
 			
 			//UPDATE ANIMATION
 			super.updateAnimation();
