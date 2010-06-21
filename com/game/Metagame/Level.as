@@ -90,6 +90,9 @@ package com.game.Metagame
 			//--------PLAYER
 			
 			_player = new Player(_pStartPos[0],_pStartPos[1]);
+			_player.collideVsTiles=function():void{
+				FlxU.collide(_curscreen._tiles,_curscreen._objects);
+			}
 			_curscreen._objects.add(_player); //add it to the screen's objects!
 			//-----------------------DONE--------------------------------------
 			

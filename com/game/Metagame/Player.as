@@ -127,7 +127,7 @@ package com.game.Metagame
 			//TODO: Aiming
 			
 			super.updateMotion();
-			//collideVsTiles();
+			collideVsTiles();
 			
 			acceleration.x = 0;
 			acceleration.y = _gravity;

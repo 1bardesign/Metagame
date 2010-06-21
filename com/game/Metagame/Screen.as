@@ -80,8 +80,8 @@ package com.game.Metagame
 		
 		override public function update():void
 		{
-			FlxU.collide(_tiles,_objects);
-			FlxU.overlap(_objects,_objects, overlapped); //can do specific collision if we need
+			//FlxU.collide(_tiles,_objects);
+			//FlxU.overlap(_objects,_objects, overlapped); //can do specific collision if we need
 			super.update();
 		}
 		
