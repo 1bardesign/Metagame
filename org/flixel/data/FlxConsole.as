@@ -121,7 +121,7 @@ package org.flixel.data
 			_extraDisplay = new TextField();
 			_extraDisplay.width = 100;
 			_extraDisplay.x = tmp.width-100;
-			_extraDisplay.height = 64;
+			_extraDisplay.height = 100; //64; //i want to fit more crap in here
 			_extraDisplay.y = 20;
 			_extraDisplay.alpha = 0.5;
 			_extraDisplay.multiline = true;
@@ -186,6 +186,7 @@ package org.flixel.data
 			var fx:uint = up+rn;
 			var tt:uint = uint(total);
 			_extraDisplay.text = up + "ms update\n" + rn + "ms render\n" + fx + "ms flixel\n" + (tt-fx) + "ms flash\n" + tt + "ms total";
+			_extraDisplay.appendText("\nmouse pos:\n" + mouseX + "," + mouseY); //added for debug purposes
 			
 			if(_Y < _YT)
 				_Y += FlxG.height*10*FlxG.elapsed;
