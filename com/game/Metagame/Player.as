@@ -21,7 +21,7 @@ package com.game.Metagame
 							//Geti: i think per object, but there should be a normal value of it..
 							//i suppose we could use a scalar for it, like have it constant * objgravscalar
 		private var _gibs:FlxEmitter; //hooray! maybe use more than one, for more cinematic deaths.
-		public var collideVsTiles:Function;
+		public var collideVsLevel:Function;
 		
 		public function Player(X:int,Y:int)
 		{
@@ -122,17 +122,20 @@ package com.game.Metagame
 			}
 			if (FlxG.keys.pressed(_keys.jump) && _jumping)
 			{
-				acceleration.y -= _gravity*Math.pow(_jumpTimer,0.7); //_inputThrust.y*_jumpTimer^2; //this is unphysical. Its purpose is to allow variable height jumps.
+				acceleration.y -= _gravity*Math.pow(_jumpTimer,0.7); //this is unphysical. Its purpose is to allow variable height jumps.
 			}
 			//TODO: Aiming
 			
+			//We're not calling super.update().
+			//The reason is that we want to collide between updateMotion and updateAnimation,
+			//so we need to trigger them manually.
 			super.updateMotion();
-			collideVsTiles();
+			collideVsLevel();
 			
 			acceleration.x = 0;
 			acceleration.y = _gravity;
 			//this acceleration reset means player.update() must come after every other object updates (which would make sense, anyway).
-			//in order to prevent this from being required we'd have to have separate impulse variables.
+			//If we were to prevent this from being required we'd have to have separate impulse variables.
 			
 			//ANIMATION
 			if(_crouching)

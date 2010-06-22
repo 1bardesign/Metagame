@@ -55,19 +55,26 @@ package com.game.Metagame
 			//the screens! yay! finally some juiciness!
 			_screenArray = new Array(_dimensions[0]);
 			_screens = new FlxGroup;
-			for (var x:Number=0;x<_dimensions[0];x++){ _screenArray[x] = new Array(_dimensions[1]); //adding 2d-ness
-				for (var y:Number=0;y<_dimensions[1];y++){ _screenArray[x][y] = new Array(_dimensions[2]); //adding 3d-ness
-				for (var z:Number=0;z<_dimensions[2];z++){ //add the screens to the y-axis array
-				n1 = n2+1;
-				if ((x != _dimensions[0] - 1) && (y != _dimensions[1] - 1) && (z != _dimensions[2] - 1))
-					n2 = data.indexOf("|",n1);
-				else
-					n2 = data.indexOf("#",n1);
-				_screenString = data.slice(n1,n2);
-				var screen:Screen = new Screen(_screenString, this, new Array(x,y,z));
-				_screenArray[x][y][z] = screen;
-				_screens.add(screen);
-			} } }
+			for (var x:Number=0;x<_dimensions[0];x++)
+			{
+				_screenArray[x] = new Array(_dimensions[1]); //adding 2d-ness
+				for (var y:Number=0;y<_dimensions[1];y++)
+				{
+					_screenArray[x][y] = new Array(_dimensions[2]); //adding 3d-ness
+					for (var z:Number=0;z<_dimensions[2];z++)
+					{ //add the screens to the y-axis array
+						n1 = n2+1;
+						if ((x != _dimensions[0] - 1) && (y != _dimensions[1] - 1) && (z != _dimensions[2] - 1))
+							n2 = data.indexOf("|",n1);
+						else
+							n2 = data.indexOf("#",n1);
+						_screenString = data.slice(n1,n2);
+						var screen:Screen = new Screen(_screenString, this, new Array(x,y,z));
+						_screenArray[x][y][z] = screen;
+						_screens.add(screen);
+					}
+				}
+			}
 			//the player position
 			_pStartPos = new Array(5);
 			for (i=0;i<5;i++)
@@ -90,7 +97,8 @@ package com.game.Metagame
 			//--------PLAYER
 			
 			_player = new Player(_pStartPos[0],_pStartPos[1]);
-			_player.collideVsTiles=function():void{
+			_player.collideVsLevel = function():void
+			{
 				FlxU.collide(_curscreen._tiles,_curscreen._objects);
 			}
 			_curscreen._objects.add(_player); //add it to the screen's objects!
@@ -107,7 +115,7 @@ package com.game.Metagame
 		override public function update():void
 		{
 			_curscreen.update(); //can be extended later
-			_player.update();
+			//_player.update();
 		}
 		
 	}

@@ -7,7 +7,7 @@ package com.game.Metagame
 		[Embed(source="../../../data/tilebase.png")] private var ImgTiles:Class;
 		//[Embed(source="../../../data/map.txt",mimeType="application/octet-stream")] private var TxtMap:Class;
 		[Embed(source="../../../data/04B03.TTF", fontName="F04B", embedAsCFF="false", mimeType="application/x-font-truetype")]
-			private var F04:Class; //EMBED THE FONT
+		private var F04:Class; //EMBED THE FONT
 		//TODO SOUNDS
 		
 		//VARIABLES
@@ -21,7 +21,7 @@ package com.game.Metagame
 			//TODO: LOADING FROM OTHER PLACES
 			
 			//no mouse in game
-			FlxG.mouse.hide();
+			//FlxG.mouse.hide();
 			
 			_level = new Level(data);
 			add(_level);
