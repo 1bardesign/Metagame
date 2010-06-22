@@ -6,21 +6,20 @@ package com.game.Metagame
 	{
 		[Embed(source="../../../data/robot.png")] private var ImgPlayer:Class;
 		
-		private var _keys:Object;
-		private var _inputThrust:FlxPoint;
-		private var _airThrustMultiplier:Number;
-		private var _crouching:Boolean;
-		private var _crouchThrustMultiplier:Number;
-		private var _crouchJumpMultiplier:Number;
-		private var _groundDrag:Number;
-		private var _airDrag:Number;
-		private var _jumping:Boolean;
-		private var _jumpTimer:Number; //variable that times the length of each jump
-		private var _jumpDuration:Number;
-		private var _gravity:Number; //should we have gravity be global or per-object?
-		private var _boxData:Object; //bounding boxes list
-		private var _health:Number;
-		private var _gibs:FlxEmitter; //hooray! maybe use more than one, for more cinematic deaths.
+		private var keys:Object;
+		private var inputThrust:FlxPoint;
+		private var airThrustMultiplier:Number;
+		private var crouching:Boolean;
+		private var crouchThrustMultiplier:Number;
+		private var crouchJumpMultiplier:Number;
+		private var groundDrag:Number;
+		private var airDrag:Number;
+		private var jumping:Boolean;
+		private var jumpTimer:Number; //variable that times the length of each jump
+		private var jumpDuration:Number;
+		private var gravity:Number; //should we have gravity be global or per-object?
+		private var boxData:Object; //bounding boxes list
+		private var gibs:FlxEmitter; //hooray! maybe use more than one, for more cinematic deaths.
 		public var collideVsLevel:Function;
 		
 		public function Player(X:int,Y:int)
@@ -30,35 +29,32 @@ package com.game.Metagame
 			
 			//input. This should be expanded later,
 			//I'm just doing it like this with a generic object so I don't need to go through and find all explicit references later.
-			_keys = new Object();
-			_keys.left="LEFT";
-			_keys.right="RIGHT"
-			_keys.jump="Z";
-			_keys.crouch="X";
-			//_keys.forward="UP";
-			//_keys.backward="DOWN"; //for once we've got 3d.
+			keys = new Object();
+			keys.left="LEFT";
+			keys.right="RIGHT"
+			keys.jump="Z";
+			keys.crouch="X";
+			//keys.forward="UP";
+			//keys.backward="DOWN"; //for once we've got 3d.
 			
 			//basic player physics
-			_inputThrust = new FlxPoint(2/3,3); //running and jump input thrust
-			_airThrustMultiplier = 0.5;
-			_crouchThrustMultiplier = 0.3;
-			_crouchJumpMultiplier = 0.5; //don't know what happened here, I don't rememeber touching it. Back to 0.5
-			_groundDrag = 0.8;
-			_airDrag = 0.9;
+			inputThrust = new FlxPoint(2/3,3); //running and jump input thrust
+			airThrustMultiplier = 0.5;
+			crouchThrustMultiplier = 0.3;
+			crouchJumpMultiplier = 0.5; //don't know what happened here, I don't rememeber touching it. Back to 0.5
+			groundDrag = 0.8;
+			airDrag = 0.9;
 			//1-gD=(1-aD)/aTM should roughly hold for smooth running jumps.
-			_jumpDuration = 30;
-			_gravity = 0.3;
+			jumpDuration = 30;
+			gravity = 0.3;
 			maxVelocity.x = 10;
 			maxVelocity.y = 10;
-			
-			//health
-			_health = 100
-			
+						
 			//the player will have several states (standing, crouching, rolling etc) with different bounding boxes
 			//this probably shouldn't be a generic object
-			_boxData = new Object();
-			_boxData.stand = {w:15,h:30,ox:12,oy:4};
-			_boxData.crouch = {w:15,h:15,ox:12,oy:20};
+			boxData = new Object();
+			boxData.stand = {w:15,h:30,ox:12,oy:4};
+			boxData.crouch = {w:15,h:15,ox:12,oy:20};
 			
 			//set bounding box
 			x -= width/2;
@@ -75,25 +71,21 @@ package com.game.Metagame
 		
 		override public function update():void
 		{
-			if(_health<=0)
-			{
-				//player is dead
-			}
 			
 			//MOVEMENT
 			//drag
-			velocity.x *= onFloor?_groundDrag:_airDrag; //technically, this should be based on the force of gravity, but that would feel weird.
-			//velocity.y *= onFloor?_groundDrag:_airDrag;
+			velocity.x *= onFloor?groundDrag:airDrag; //technically, this should be based on the force of gravity, but that would feel weird.
+			//velocity.y *= onFloor?groundDrag:airDrag;
 			//surface friction for the vertical component seems unfun.
 			//for now I've disabled vertical drag totally because it caused problems with variable-height jumping.
 			
 			//input
 						
-			if(_crouching != FlxG.keys.pressed(_keys.crouch))
+			if(crouching != FlxG.keys.pressed(keys.crouch))
 			{
 				//we're switching states of crouchingness
 				//adjust bounding box
-				if(_crouching)
+				if(crouching)
 				{
 					changeBoxes("stand");
 					/*height = 30;
@@ -108,33 +100,33 @@ package com.game.Metagame
 					y += 16;*/
 				}
 			}
-			_crouching = FlxG.keys.pressed(_keys.crouch);
+			crouching = FlxG.keys.pressed(keys.crouch);
 			
-			var thrustDir:int = int(FlxG.keys.pressed(_keys.right))-int(FlxG.keys.pressed(_keys.left)); //1 is right, -1 is left.
+			var thrustDir:int = int(FlxG.keys.pressed(keys.right))-int(FlxG.keys.pressed(keys.left)); //1 is right, -1 is left.
 			if (thrustDir != 0)
 			{
 				facing = thrustDir>0?RIGHT:LEFT;
-				acceleration.x += thrustDir*_inputThrust.x;
+				acceleration.x += thrustDir*inputThrust.x;
 				if (!onFloor)
-					acceleration.x *= _airThrustMultiplier; //less thrust in the air
-				if(_crouching)
-					acceleration.x *= _crouchThrustMultiplier; //less thrust while crouching
+					acceleration.x *= airThrustMultiplier; //less thrust in the air
+				if(crouching)
+					acceleration.x *= crouchThrustMultiplier; //less thrust while crouching
 			}
-			if(FlxG.keys.justPressed(_keys.jump) && onFloor)
+			if(FlxG.keys.justPressed(keys.jump) && onFloor)
 			{
-				acceleration.y -= _inputThrust.y*(_crouching ? _crouchJumpMultiplier : 1);
-				_jumpTimer = 1; //after this timer elapses (gets to zero), the player can no longer control the vertical of the jump
-				_jumping = true;
+				acceleration.y -= inputThrust.y*(crouching ? crouchJumpMultiplier : 1);
+				jumpTimer = 1; //after this timer elapses (gets to zero), the player can no longer control the vertical of the jump
+				jumping = true;
 			}
-			if (_jumping) //tick down and such
+			if (jumping) //tick down and such
 			{
-				_jumpTimer -= 1/_jumpDuration;
-				if (FlxG.keys.justReleased(_keys.jump) || _jumpTimer < 0)
-					_jumping = false;
+				jumpTimer -= 1/jumpDuration;
+				if (FlxG.keys.justReleased(keys.jump) || jumpTimer < 0)
+					jumping = false;
 			}
-			if (FlxG.keys.pressed(_keys.jump) && _jumping)
+			if (FlxG.keys.pressed(keys.jump) && jumping)
 			{
-				acceleration.y -= _gravity*Math.pow(_jumpTimer,0.7); //this is unphysical. Its purpose is to allow variable height jumps.
+				acceleration.y -= gravity*Math.pow(jumpTimer,0.7); //this is unphysical. Its purpose is to allow variable height jumps.
 			}
 			//TODO: Aiming
 			
@@ -145,12 +137,12 @@ package com.game.Metagame
 			collideVsLevel();
 			
 			acceleration.x = 0;
-			acceleration.y = _gravity;
+			acceleration.y = gravity;
 			//this acceleration reset means player.update() must come after every other object updates (which would make sense, anyway).
 			//If we were to prevent this from being required we'd have to have separate impulse variables.
 			
 			//ANIMATION
-			if(_crouching)
+			if(crouching)
 			{
 				play("crouch");
 			}
@@ -178,7 +170,7 @@ package com.game.Metagame
 		
 		private function changeBoxes(stateID:String):void
 		{
-			var newState:Object = _boxData[stateID];
+			var newState:Object = boxData[stateID];
 			y -= newState.h-height;
 			x -= (newState.w-width)/2;
 			width = newState.w;
@@ -192,8 +184,8 @@ package com.game.Metagame
 			//if(velocity.y > 50)
 				//FlxG.play(SndLand); ---------------------------------------------------ADD LANDING SOUND
 			onFloor = true;
-			_jumping = false;
-			_jumpTimer = 0;
+			jumping = false;
+			jumpTimer = 0;
 			super.hitBottom(Contact,Velocity);
 		}
 	}
