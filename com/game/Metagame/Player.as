@@ -18,8 +18,8 @@ package com.game.Metagame
 		private var _jumpTimer:Number; //variable that times the length of each jump
 		private var _jumpDuration:Number;
 		private var _gravity:Number; //should we have gravity be global or per-object?
-							//Geti: i think per object, but there should be a normal value of it..
-							//i suppose we could use a scalar for it, like have it constant * objgravscalar
+		private var _boxData:Object; //bounding boxes list
+		private var _health:Number;
 		private var _gibs:FlxEmitter; //hooray! maybe use more than one, for more cinematic deaths.
 		public var collideVsLevel:Function;
 		
@@ -27,12 +27,6 @@ package com.game.Metagame
 		{
 			super(X,Y);
 			loadGraphic(ImgPlayer,true,true,40,40);
-			
-			//set bounding box
-			width = 15;
-			height = 30;
-			offset.x = 12;
-			offset.y = 4;
 			
 			//input. This should be expanded later,
 			//I'm just doing it like this with a generic object so I don't need to go through and find all explicit references later.
@@ -57,6 +51,20 @@ package com.game.Metagame
 			maxVelocity.x = 10;
 			maxVelocity.y = 10;
 			
+			//health
+			_health = 100
+			
+			//the player will have several states (standing, crouching, rolling etc) with different bounding boxes
+			//this probably shouldn't be a generic object
+			_boxData = new Object();
+			_boxData.stand = {w:15,h:30,ox:12,oy:4};
+			_boxData.crouch = {w:15,h:15,ox:12,oy:20};
+			
+			//set bounding box
+			x -= width/2;
+			y -= height; //the player's starting point should refer to the bottom of the sprite
+			changeBoxes("stand");
+			
 			//animations
 			addAnimation("idle", [0]);
 			addAnimation("run", [1, 2, 3, 5, 6, 7], 0.2);
@@ -67,8 +75,12 @@ package com.game.Metagame
 		
 		override public function update():void
 		{
+			if(_health<=0)
+			{
+				//player is dead
+			}
+			
 			//MOVEMENT
-
 			//drag
 			velocity.x *= onFloor?_groundDrag:_airDrag; //technically, this should be based on the force of gravity, but that would feel weird.
 			//velocity.y *= onFloor?_groundDrag:_airDrag;
@@ -80,20 +92,20 @@ package com.game.Metagame
 			if(_crouching != FlxG.keys.pressed(_keys.crouch))
 			{
 				//we're switching states of crouchingness
-				//this will be inadequate if we add more states
-				
 				//adjust bounding box
 				if(_crouching)
 				{
-					height = 30;
+					changeBoxes("stand");
+					/*height = 30;
 					offset.y = 4;
-					y -= 10;
+					y -= 10;*/
 				}
 				else
 				{
-					height = 15;
+					changeBoxes("crouch");
+					/*height = 15;
 					offset.y = 20;
-					y += 16;
+					y += 16;*/
 				}
 			}
 			_crouching = FlxG.keys.pressed(_keys.crouch);
@@ -164,6 +176,17 @@ package com.game.Metagame
 			super.updateFlickering();
 		}
 		
+		private function changeBoxes(stateID:String):void
+		{
+			var newState:Object = _boxData[stateID];
+			y -= newState.h-height;
+			x -= (newState.w-width)/2;
+			width = newState.w;
+			height = newState.h;
+			offset.x = newState.ox;
+			offset.y = newState.oy;
+		}
+		
 		override public function hitBottom(Contact:FlxObject,Velocity:Number):void
 		{
 			//if(velocity.y > 50)
@@ -171,7 +194,7 @@ package com.game.Metagame
 			onFloor = true;
 			_jumping = false;
 			_jumpTimer = 0;
-			return super.hitBottom(Contact,Velocity);
+			super.hitBottom(Contact,Velocity);
 		}
 	}
 }
