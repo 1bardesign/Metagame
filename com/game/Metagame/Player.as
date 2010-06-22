@@ -19,6 +19,7 @@ package com.game.Metagame
 		private var _jumpDuration:Number;
 		private var _gravity:Number; //should we have gravity be global or per-object?
 		private var _boxData:Object; //bounding boxes list
+		private var _health:Number;
 		private var _gibs:FlxEmitter; //hooray! maybe use more than one, for more cinematic deaths.
 		public var collideVsLevel:Function;
 		
@@ -50,6 +51,9 @@ package com.game.Metagame
 			maxVelocity.x = 10;
 			maxVelocity.y = 10;
 			
+			//health
+			_health = 100
+			
 			//the player will have several states (standing, crouching, rolling etc) with different bounding boxes
 			//this probably shouldn't be a generic object
 			_boxData = new Object();
@@ -57,7 +61,6 @@ package com.game.Metagame
 			_boxData.crouch = {w:15,h:15,ox:12,oy:20};
 			
 			//set bounding box
-			FlxG.log([x,y])
 			x -= width/2;
 			y -= height; //the player's starting point should refer to the bottom of the sprite
 			changeBoxes("stand");
@@ -72,8 +75,12 @@ package com.game.Metagame
 		
 		override public function update():void
 		{
+			if(_health<=0)
+			{
+				//player is dead
+			}
+			
 			//MOVEMENT
-
 			//drag
 			velocity.x *= onFloor?_groundDrag:_airDrag; //technically, this should be based on the force of gravity, but that would feel weird.
 			//velocity.y *= onFloor?_groundDrag:_airDrag;
@@ -187,7 +194,7 @@ package com.game.Metagame
 			onFloor = true;
 			_jumping = false;
 			_jumpTimer = 0;
-			return super.hitBottom(Contact,Velocity);
+			super.hitBottom(Contact,Velocity);
 		}
 	}
 }
