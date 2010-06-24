@@ -21,7 +21,6 @@ package com.game.Metagame
 		
 		public function Level(input:String)
 		{
-			//BROKEN! ARRAYS NEED FIXING!
 			super();
 			/* DATA FORMAT:
 			 * #name#author#x|y|z#scr1|scr2|scr3|...#px1|py1|px2|py2|pz3#
@@ -31,8 +30,10 @@ package com.game.Metagame
 			data = input;
 			dataArray = data.split("#"); // using split now, cheers matt
 			//the level's name
-			name = dataArray[1]; //[0] is "" because of the preceding #
-			//the author
+			name = dataArray[1];
+			//[0] is "" because of the preceding # -- should we switch this to another symbol to
+			//allow for multiple levels in a file/string?
+			//the author for bragging rights/whatever. Will likely read "The Metagame Team" for vanilla levels
 			author = dataArray[2];
 			//the dimensions
 			dimensions = dataArray[3].split("|");
@@ -80,12 +81,48 @@ package com.game.Metagame
 		override public function render():void
 		{
 			curscreen.render();
-			//player.render();
 		}
 		
 		override public function update():void
 		{
 			curscreen.update(); //can be extended later
+			/* NOTE!: THE DIMENSIONS ARE CURRENTLY BEING SET WRONG!
+			 * THUS, ALL THE NUMBERS HERE ARE JUST HACKED TO WORK RIGHT
+			 * THEY'LL NEED FIXING WHEN THE DIMENSIONS GET FIXED! */
+			
+			if (player.x > 400 && curscreen.position[1] < dimensions[0]-1)
+			{
+				FlxG.log("MOVE RIGHT");
+				curscreen.objects.remove(player); //remove and splice out the player
+				curscreen = screenArray[curscreen.position[0]][curscreen.position[1]+1][curscreen.position[2]];
+				curscreen.objects.add(player); //put the player into the new currentscreen's objects!
+				player.x -= 390; //Still some wierd glitches w/ this!
+			}
+			if (player.x < 0 && curscreen.position[1] > 0)
+			{
+				FlxG.log("MOVE LEFT");
+				curscreen.objects.remove(player);
+				curscreen = screenArray[curscreen.position[0]][curscreen.position[1]-1][curscreen.position[2]];
+				curscreen.objects.add(player);
+				player.x += 390;
+			}
+			if (player.y > 272 && curscreen.position[0] < dimensions[1]-1)
+			{
+				FlxG.log("MOVE DOWN");
+				curscreen.objects.remove(player);
+				curscreen = screenArray[curscreen.position[0]+1][curscreen.position[1]][curscreen.position[2]];
+				curscreen.objects.add(player);
+				player.y -= 262;
+			}
+			if (player.y < 0 && curscreen.position[0] > 0)
+			{
+				FlxG.log("MOVE UP");
+				curscreen.objects.remove(player);
+				curscreen = screenArray[curscreen.position[0]-1][curscreen.position[1]][curscreen.position[2]];
+				curscreen.objects.add(player);
+				player.y += 262;
+			}
+			
 		}
 		
 	}

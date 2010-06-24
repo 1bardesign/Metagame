@@ -39,15 +39,15 @@ package com.game.Metagame
 			
 			//basic player physics
 			inputThrust = new FlxPoint(2/3,3); //running and jump input thrust
-			airThrustMultiplier = 0.5;
+			airThrustMultiplier = 0.4;
 			crouchThrustMultiplier = 0.3;
-			crouchJumpMultiplier = 0.5; //don't know what happened here, I don't rememeber touching it. Back to 0.5
+			crouchJumpMultiplier = 0.5;
 			groundDrag = 0.8;
 			airDrag = 0.9;
 			//1-gD=(1-aD)/aTM should roughly hold for smooth running jumps.
-			jumpDuration = 30;
+			jumpDuration = 34;
 			gravity = 0.3;
-			maxVelocity.x = 10;
+			maxVelocity.x = 8;
 			maxVelocity.y = 10;
 						
 			//the player will have several states (standing, crouching, rolling etc) with different bounding boxes

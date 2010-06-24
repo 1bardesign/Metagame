@@ -15,12 +15,12 @@ package com.game.Metagame
 		protected var tilestring:String;	//the string of tiles, postprocessing helper object
 		protected var objectstring:String;	//the string of objects, preprocessing
 		protected var level:Level; 		//the level the screen is a part of
-		protected var position:Array; 		//the xyz position in the level
+		public var position:Array; 		//the xyz position in the level
 		//actual flxobject stuff ==============================================
 		public var tiles:FlxGroup;
 		public var objects:FlxGroup;
 		
-		public function Screen(data:String, level:Level, position:Array)
+		public function Screen(data:String, level:Level, pos:Array)
 		{
 			super();
 			//------------PREPROCESSING THE DATA--------------------------------
@@ -34,13 +34,12 @@ package com.game.Metagame
 			/* splitting it into useful chunks
 			 * they're separated by [] */
 			chunks = screendata.split("/"); //works afaik, 0 based array produced
-			FlxG.log(chunks);
 			//the screen's tiles preprocessing, internal helper used later
 			var mapstring:String = chunks[0];
 			//the screen's objects
 			objectstring = chunks[1];
 			//get the position array
-			position = position;
+			position = pos; //note to self, never use duplicate names >_>
 			//-----------------------DONE--------------------------------------
 			
 			//-------TILE PROCESSING----------------------------
@@ -51,8 +50,8 @@ package com.game.Metagame
 			//into the FlxTileMap
 			tilestring = "";
 			//hooray, some iteration -_-;
-			//map is 25x18 for the record.
-			for (var i:Number=0;i-1<mapstring.length/18;i++) {
+			//map is 25x17 for the record.
+			for (var i:Number=0;i-1<mapstring.length/17;i++) {
 			for (var j:Number=0;j<25;j++) 
 			{
 				//put some processing in here once we're using more than 1 and 0
