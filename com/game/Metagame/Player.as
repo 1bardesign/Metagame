@@ -45,21 +45,21 @@ package com.game.Metagame
 			//keys.backward="DOWN"; //for once we've got 3d.
 			
 			//basic player physics
-			inputThrust = new FlxPoint(2/3,3); //running and jump input thrust
-			airThrustMultiplier = 0.5;
+			inputThrust = new FlxPoint(2/3,0.7); //running and jump input thrust
+			airThrustMultiplier = 1/3;
 			crouchThrustMultiplier = 0.3;
 			crouchJumpMultiplier = 0.5; //don't know what happened here, I don't rememeber touching it. Back to 0.5
 			rollBounce = 0.5; //tweaked to feel less like rubber :P
 			rollThrustMultiplier = 0.15;
 			angularDrag = 0.1
-			groundDrag = 0.8;
+			groundDrag = 0.85;
 			rollDrag = 0.98;
-			airDrag = 0.9;
+			airDrag = 0.95;
 			//1-gD=(1-aD)/aTM should roughly hold for smooth running jumps.
-			jumpDuration = 35; //minimum needed to jump up screens w/o walljump!
+			jumpDuration = 25; //minimum needed to jump up screens w/o walljump!
 			gravity = 0.3;
-			maxVelocity.x = 5;
-			maxVelocity.y = 5; //maybe this should be lower? it's pretty exteme..
+			maxVelocity.x = 10;
+			maxVelocity.y = 10; //maybe this should be lower? it's pretty exteme..
 						
 			//the player will have several states (standing, crouching, rolling etc) with different bounding boxes
 			//this probably shouldn't be a generic object
@@ -88,7 +88,7 @@ package com.game.Metagame
 			//MOVEMENT
 			//drag
 			velocity.x *= rolling?rollDrag:onFloor?groundDrag:airDrag; //technically, this should be based on the force of gravity, but that would feel weird.
-			//velocity.y *= onFloor?groundDrag:airDrag;
+			velocity.y *= rolling?rollDrag:airDrag
 			//surface friction for the vertical component seems unfun.
 			//for now I've disabled vertical drag totally because it caused problems with variable-height jumping.
 			
@@ -103,6 +103,7 @@ package com.game.Metagame
 						//player is travelling at 0.7 of max natural running speed;roll
 						changeBoxes("roll");
 						angle = 90; //indicator that this is roll not crouch
+						angularVelocity = 360*velocity.x/(Math.PI*height); //start off with some spin cos it looks better
 						origin.y = 28; //i don't have an animation yet so i need to use FlxSprite.angle. This should be removed later.
 						rolling = true;
 					}
@@ -146,9 +147,12 @@ package com.game.Metagame
 				if (FlxG.keys.justReleased(keys.jump) || jumpTimer < 0)
 					jumping = false;
 			}
+			if(onTop){
+				jumping=false;
+			}
 			if (FlxG.keys.pressed(keys.jump) && jumping)
 			{
-				acceleration.y -= gravity*Math.pow(jumpTimer,0.7); //this is unphysical. Its purpose is to allow variable height jumps.
+				acceleration.y -= gravity+inputThrust.y*Math.pow(jumpTimer,2); //this is unphysical. Its purpose is to allow variable height jumps.
 			}
 			//TODO: Aiming
 			
@@ -157,9 +161,8 @@ package com.game.Metagame
 			//so we need to trigger them manually.
 			
 			super.updateMotion();
-			onLeft=onRight=false;
+			onLeft=onRight=onTop=false;
 			collideVsLevel();
-			FlxG.log(velocity.x);
 			if (rolling){
 				//rotate the sprite
 				if(onFloor)
