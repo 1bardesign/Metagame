@@ -268,13 +268,13 @@ package org.flixel
 				refreshHulls();
 			onFloor = false;
 			
-			/*var vc:Number;
+			var vc:Number;
 
 			vc = (FlxU.computeVelocity(angularVelocity,angularAcceleration,angularDrag,maxAngular) - angularVelocity)/2;
 			angularVelocity += vc; 
 			angle += angularVelocity*FlxG.elapsed;
 			angularVelocity += vc;
-			
+			/*
 			var thrustComponents:FlxPoint;
 			if(thrust != 0)
 			{
