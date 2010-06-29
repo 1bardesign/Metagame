@@ -96,7 +96,8 @@ package com.game.Metagame
 				curscreen.objects.remove(player); //remove and splice out the player
 				curscreen = screenArray[curscreen.position[0]][curscreen.position[1]+1][curscreen.position[2]];
 				curscreen.objects.add(player); //put the player into the new currentscreen's objects!
-				player.x -= 390; //Still some wierd glitches w/ this!
+				player.x -= 390; //Still some wierd glitches w/ this! I THINK IT'S RELATED TO GRAVITY :\
+				//try rolling slowly over seams to see what I mean..
 			}
 			if (player.x < 0 && curscreen.position[1] > 0)
 			{

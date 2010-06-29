@@ -49,17 +49,17 @@ package com.game.Metagame
 			airThrustMultiplier = 0.5;
 			crouchThrustMultiplier = 0.3;
 			crouchJumpMultiplier = 0.5; //don't know what happened here, I don't rememeber touching it. Back to 0.5
-			rollBounce = 0.8;
+			rollBounce = 0.5; //tweaked to feel less like rubber :P
 			rollThrustMultiplier = 0.15;
 			angularDrag = 0.1
 			groundDrag = 0.8;
 			rollDrag = 0.98;
 			airDrag = 0.9;
 			//1-gD=(1-aD)/aTM should roughly hold for smooth running jumps.
-			jumpDuration = 30;
+			jumpDuration = 35; //minimum needed to jump up screens w/o walljump!
 			gravity = 0.3;
-			maxVelocity.x = 10;
-			maxVelocity.y = 10;
+			maxVelocity.x = 5;
+			maxVelocity.y = 5; //maybe this should be lower? it's pretty exteme..
 						
 			//the player will have several states (standing, crouching, rolling etc) with different bounding boxes
 			//this probably shouldn't be a generic object
