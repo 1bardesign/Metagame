@@ -45,7 +45,7 @@ package com.game.Metagame
 			//keys.backward="DOWN"; //for once we've got 3d.
 			
 			//basic player physics
-			inputThrust = new FlxPoint(2/3,0.7); //running and jump input thrust
+			inputThrust = new FlxPoint(2/3,5); //running and jump input thrust
 			airThrustMultiplier = 1/3;
 			crouchThrustMultiplier = 0.3;
 			crouchJumpMultiplier = 0.5; //don't know what happened here, I don't rememeber touching it. Back to 0.5
@@ -152,7 +152,7 @@ package com.game.Metagame
 			}
 			if (FlxG.keys.pressed(keys.jump) && jumping)
 			{
-				acceleration.y -= gravity+inputThrust.y*Math.pow(jumpTimer,2); //this is unphysical. Its purpose is to allow variable height jumps.
+				if(jumpTimer>0)acceleration.y -= gravity;//+inputThrust.y*Math.pow(jumpTimer,2); //this is unphysical. Its purpose is to allow variable height jumps.
 			}
 			//TODO: Aiming
 			
