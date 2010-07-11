@@ -173,14 +173,12 @@ package com.game.Metagame
 				level.curscreen.objects.remove(this); //remove and splice out the player
 				level.curscreen = level.screenArray[level.curscreen.position[0]][level.curscreen.position[1]][level.curscreen.position[2]-1];
 				level.curscreen.objects.add(this); //put the player into the new currentscreen's objects!
-				travel.FG = false;
 			}
 			if (FlxG.keys.pressed(keys.forward) && travel.BG && level.curscreen.position[2] < level.dimensions[2] - 1)
 			{
 				level.curscreen.objects.remove(this); //remove and splice out the player
 				level.curscreen = level.screenArray[level.curscreen.position[0]][level.curscreen.position[1]][level.curscreen.position[2]+1];
 				level.curscreen.objects.add(this); //put the player into the new currentscreen's objects!
-				travel.BG = false;
 			}
 			travel.FG = false;
 			travel.BG = false;

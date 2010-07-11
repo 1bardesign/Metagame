@@ -103,7 +103,7 @@ package com.game.Metagame
 					FGstring += "1,";
 					BGstring += "0,";
 				}
-				else
+				else if (maskstring.charAt(((i)*25)+j) == "3")
 				{
 					FGstring += "1,";
 					BGstring += "1,";
@@ -113,16 +113,19 @@ package com.game.Metagame
 			BGstring += "\n";
 			}
 			FGMask.loadMap(FGstring,ImgMask,16);
+			FGMask.collideIndex = 1;
 			BGMask.loadMap(BGstring,ImgMask,16);
-			add(FGMask); add(BGMask);
+			BGMask.collideIndex = 1;
 			//--------------------------------------------------
 			
 			//-------OBJECT PROCESSING--------------------------
 			//OBJECT PROCESSING HERE
 			objects = new FlxGroup();
 			//--------------------------------------------------
+			add(BGMask);
 			add(tiles); //tiles behind objects
 			add(objects);
+			add(FGMask);
 		}
 		
 		override public function update():void

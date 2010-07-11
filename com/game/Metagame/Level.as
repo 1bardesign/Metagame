@@ -125,19 +125,10 @@ package com.game.Metagame
 				curscreen.objects.add(player);
 				player.y += 262;
 			}		
-			FlxU.overlap(curscreen.FGMask,player,overlappedFG);
-			FlxU.overlap(curscreen.BGMask,player,overlappedBG);
+			if (curscreen.FGMask.overlaps(player))
+				player.travel.FG = true;
+			if (curscreen.BGMask.overlaps(player))
+				player.travel.BG = true;
 		}	
-		
-		protected function overlappedFG(Object1:FlxObject,Object2:Player):void
-		{
-			Object2.travel.FG = true;
-		}
-		
-		protected function overlappedBG(Object1:FlxObject,Object2:Player):void
-		{
-			Object2.travel.BG = true;
-		}
-		
 	}
 }
