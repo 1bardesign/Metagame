@@ -7,6 +7,7 @@ package com.game.Metagame
 		//THE BASIC GAME SCREEN OF TILES AND OBJECTS! HOORAY!
 		
 		[Embed(source="../../../data/tilebase.png")] private var ImgTiles:Class;
+		[Embed(source="../../../data/tilemask.png")] private var ImgMask:Class;
 		[Embed(source="../../../data/tilelines.png")] private var ImgLines:Class;
 		
 		//mostly internal stuff, but some of it's used for drawing and logic ==
@@ -18,6 +19,8 @@ package com.game.Metagame
 		public var position:Array; 		//the xyz position in the level
 		//actual flxobject stuff ==============================================
 		public var tiles:FlxGroup;
+		public var FGMask:FlxTilemap;
+		public var BGMask:FlxTilemap;
 		public var objects:FlxGroup;
 		
 		public function Screen(data:String, level:Level, pos:Array)
@@ -36,8 +39,10 @@ package com.game.Metagame
 			chunks = screendata.split("/"); //works afaik, 0 based array produced
 			//the screen's tiles preprocessing, internal helper used later
 			var mapstring:String = chunks[0];
+			//the screen's mask string.
+			var maskstring:String = chunks[1];
 			//the screen's objects
-			objectstring = chunks[1];
+			objectstring = chunks[2];
 			//get the position array
 			position = pos; //note to self, never use duplicate names >_>
 			//-----------------------DONE--------------------------------------
@@ -66,6 +71,52 @@ package com.game.Metagame
 			tiles.add(tilemap);
 			//--------------------------------------------------
 			
+			//-------MASK PROCESSING----------------------------
+			//THIS IS SIMILAR TO THE ABOVE, BUT DOES 2 MAPS AT ONCE
+			//initialise the maps first
+			FGMask = new FlxTilemap;
+			BGMask = new FlxTilemap;
+			
+			//now initialise the strings we're going to load
+			//into the FlxTileMaps
+			var FGstring:String = "";
+			var BGstring:String = "";
+			//hooray, more iteration
+			for (i=0;i-1<maskstring.length/17;i++) {
+			for (j=0;j<25;j++) 
+			{
+				//1 = can move backwards
+				//2 = can move forwards
+				//3 = can move both ways
+				if (maskstring.charAt(((i)*25)+j) == "0")
+				{
+					FGstring += "0,";
+					BGstring += "0,";
+				}
+				else if (maskstring.charAt(((i)*25)+j) == "1")
+				{
+					FGstring += "0,";
+					BGstring += "1,";
+				}
+				else if (maskstring.charAt(((i)*25)+j) == "2")
+				{
+					FGstring += "1,";
+					BGstring += "0,";
+				}
+				else
+				{
+					FGstring += "1,";
+					BGstring += "1,";
+				}
+			}
+			FGstring += "\n";
+			BGstring += "\n";
+			}
+			FGMask.loadMap(FGstring,ImgMask,16);
+			BGMask.loadMap(BGstring,ImgMask,16);
+			add(FGMask); add(BGMask);
+			//--------------------------------------------------
+			
 			//-------OBJECT PROCESSING--------------------------
 			//OBJECT PROCESSING HERE
 			objects = new FlxGroup();
@@ -77,11 +128,7 @@ package com.game.Metagame
 		override public function update():void
 		{
 			super.update();
-		}
-		
-		protected function overlapped(Object1:FlxObject,Object2:FlxObject):void
-		{
-			//CALLED WHEN SHIT OVERLAPS LATER
+			//for if this needs extension
 		}
 		
 	}

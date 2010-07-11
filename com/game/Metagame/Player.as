@@ -27,12 +27,25 @@ package com.game.Metagame
 		private var gravity:Number; //should we have gravity be global or per-object?
 		private var boxData:Object; //bounding boxes list
 		private var gibs:FlxEmitter; //hooray! maybe use more than one, for more cinematic deaths.
+		private var level:Level; //allows it to access the level object.
+		
+		//Collision function
 		public var collideVsLevel:Function;
 		
-		public function Player(X:int,Y:int)
+		public var travel:Object;
+		
+		public function Player(X:int,Y:int,lvl:Level)
 		{
 			super(X,Y);
 			loadGraphic(ImgPlayer,true,true,40,40);
+			
+			//The level reference
+			level = lvl;
+			
+			//Travel, an object with BG/FG booleans to indicate ability to travel.
+			travel = new Object();
+			travel.FG = false;
+			travel.BG = false;
 			
 			//input. This should be expanded later,
 			//I'm just doing it like this with a generic object so I don't need to go through and find all explicit references later.
@@ -41,8 +54,8 @@ package com.game.Metagame
 			keys.right="RIGHT"
 			keys.jump="Z";
 			keys.crouch="X";
-			//keys.forward="UP";
-			//keys.backward="DOWN"; //for once we've got 3d.
+			keys.forward="UP";
+			keys.backward="DOWN"; //for once we've got 3d.
 			
 			//basic player physics
 			inputThrust = new FlxPoint(2/3,5); //running and jump input thrust
@@ -154,6 +167,24 @@ package com.game.Metagame
 			{
 				if(jumpTimer>0)acceleration.y -= gravity;//+inputThrust.y*Math.pow(jumpTimer,2); //this is unphysical. Its purpose is to allow variable height jumps.
 			}
+			
+			if (FlxG.keys.pressed(keys.backward) && travel.FG && level.curscreen.position[2] > 0)
+			{
+				level.curscreen.objects.remove(this); //remove and splice out the player
+				level.curscreen = level.screenArray[level.curscreen.position[0]][level.curscreen.position[1]][level.curscreen.position[2]-1];
+				level.curscreen.objects.add(this); //put the player into the new currentscreen's objects!
+				travel.FG = false;
+			}
+			if (FlxG.keys.pressed(keys.forward) && travel.BG && level.curscreen.position[2] < level.dimensions[2] - 1)
+			{
+				level.curscreen.objects.remove(this); //remove and splice out the player
+				level.curscreen = level.screenArray[level.curscreen.position[0]][level.curscreen.position[1]][level.curscreen.position[2]+1];
+				level.curscreen.objects.add(this); //put the player into the new currentscreen's objects!
+				travel.BG = false;
+			}
+			travel.FG = false;
+			travel.BG = false;
+			
 			//TODO: Aiming
 			
 			//We're not calling super.update().

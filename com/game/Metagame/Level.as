@@ -9,9 +9,9 @@ package com.game.Metagame
 		private var dataArray:Array;		//post-split data
 		protected var name:String;			//the level's name
 		protected var author:String;			//the author(s)
-		protected var dimensions:Array;		//the dimensions
 		protected var leveldata:String;		//all the actual level data collected
 		protected var pStartPos:Array;		//the player's starting position.
+		public var dimensions:Array;		//the dimensions
 				//NB PROCESSING OF THE SCREEN STRINGS IS DONE BY THE SCREEN OBJECT
 		public var screenArray:Array;			//a 3D array of the screens: <3 this one
 		//actual flxobject stuff ==============================================
@@ -40,17 +40,19 @@ package com.game.Metagame
 			//the screens! yay! finally some juiciness!
 			screenArray = new Array(dimensions[0]);
 			screens = new FlxGroup;
-			var screenDataArray:Array = dataArray[4].split("|").reverse(); //we want it flipped so we can pop stuff out of it.
+			var screenDataArray:Array = dataArray[4].split("|");
+			screenDataArray.reverse(); //we want it flipped so we can pop stuff out of it.
 			for (var x:Number=0;x<dimensions[0];x++)
 			{
-				screenArray[x] = new Array(dimensions[1]); //adding 2d-ness
+				screenArray[x] = new Array(); //adding 2d-ness
 				for (var y:Number=0;y<dimensions[1];y++)
 				{
-					screenArray[x][y] = new Array(dimensions[2]); //adding 3d-ness
+					screenArray[x][y] = new Array(); //adding 3d-ness
 					for (var z:Number=0;z<dimensions[2];z++)
 					{ //add the screens to the y-axis array
 						var screenString:String = screenDataArray.pop(); //temp string
 						var screen:Screen = new Screen(screenString, this, new Array(x,y,z));
+						FlxG.log(screen.position);
 						screenArray[x][y][z] = screen;
 						screens.add(screen);
 					}
@@ -68,7 +70,7 @@ package com.game.Metagame
 			
 			//--------PLAYER
 			
-			player = new Player(pStartPos[0],pStartPos[1]);
+			player = new Player(pStartPos[0],pStartPos[1],this);
 			player.collideVsLevel = function():void
 			{
 				FlxU.collide(curscreen.tiles,curscreen.objects);
@@ -122,8 +124,19 @@ package com.game.Metagame
 				curscreen = screenArray[curscreen.position[0]-1][curscreen.position[1]][curscreen.position[2]];
 				curscreen.objects.add(player);
 				player.y += 262;
-			}
-			
+			}		
+			FlxU.overlap(curscreen.FGMask,player,overlappedFG);
+			FlxU.overlap(curscreen.BGMask,player,overlappedBG);
+		}	
+		
+		protected function overlappedFG(Object1:FlxObject,Object2:Player):void
+		{
+			Object2.travel.FG = true;
+		}
+		
+		protected function overlappedBG(Object1:FlxObject,Object2:Player):void
+		{
+			Object2.travel.BG = true;
 		}
 		
 	}
