@@ -92,36 +92,36 @@ package com.game.Metagame
 			 * THUS, ALL THE NUMBERS HERE ARE JUST HACKED TO WORK RIGHT
 			 * THEY'LL NEED FIXING WHEN THE DIMENSIONS GET FIXED! */
 			
-			if (player.x > 400 && curscreen.position[1] < dimensions[0]-1)
+			if (player.x > 400 && curscreen.position[0] < dimensions[0]-1)
 			{
 				FlxG.log("MOVE RIGHT");
 				curscreen.objects.remove(player); //remove and splice out the player
-				curscreen = screenArray[curscreen.position[0]][curscreen.position[1]+1][curscreen.position[2]];
+				curscreen = screenArray[curscreen.position[0]+1][curscreen.position[1]][curscreen.position[2]];
 				curscreen.objects.add(player); //put the player into the new currentscreen's objects!
 				player.x -= 390; //Still some wierd glitches w/ this! I THINK IT'S RELATED TO GRAVITY :\
 				//try rolling slowly over seams to see what I mean..
 			}
-			if (player.x < 0 && curscreen.position[1] > 0)
+			if (player.x < 0 && curscreen.position[0] > 0)
 			{
 				FlxG.log("MOVE LEFT");
 				curscreen.objects.remove(player);
-				curscreen = screenArray[curscreen.position[0]][curscreen.position[1]-1][curscreen.position[2]];
+				curscreen = screenArray[curscreen.position[0]-1][curscreen.position[1]][curscreen.position[2]];
 				curscreen.objects.add(player);
 				player.x += 390;
 			}
-			if (player.y > 272 && curscreen.position[0] < dimensions[1]-1)
+			if (player.y > 272 && curscreen.position[1] < dimensions[1]-1)
 			{
 				FlxG.log("MOVE DOWN");
 				curscreen.objects.remove(player);
-				curscreen = screenArray[curscreen.position[0]+1][curscreen.position[1]][curscreen.position[2]];
+				curscreen = screenArray[curscreen.position[0]][curscreen.position[1]+1][curscreen.position[2]];
 				curscreen.objects.add(player);
 				player.y -= 262;
 			}
-			if (player.y < 0 && curscreen.position[0] > 0)
+			if (player.y < 0 && curscreen.position[1] > 0)
 			{
 				FlxG.log("MOVE UP");
 				curscreen.objects.remove(player);
-				curscreen = screenArray[curscreen.position[0]-1][curscreen.position[1]][curscreen.position[2]];
+				curscreen = screenArray[curscreen.position[0]][curscreen.position[1]-1][curscreen.position[2]];
 				curscreen.objects.add(player);
 				player.y += 262;
 			}		
