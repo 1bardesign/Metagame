@@ -19,6 +19,7 @@ package com.game.Metagame
 		public var position:Array; 		//the xyz position in the level
 		//actual flxobject stuff ==============================================
 		public var tiles:FlxGroup;
+		public var decor:FlxGroup;
 		public var FGMask:FlxTilemap;
 		public var BGMask:FlxTilemap;
 		public var objects:FlxGroup;
@@ -50,6 +51,7 @@ package com.game.Metagame
 			//-------TILE PROCESSING----------------------------
 			//initialise the tiles first
 			tiles = new FlxGroup();
+			decor = new FlxGroup();
 			
 			//now initialise the string we're going to load
 			//into the FlxTileMap
@@ -72,9 +74,9 @@ package com.game.Metagame
 					if (index - 25 >= 0 && mapstring.charAt(index - 25) == "0") { topstring += "1,"; }
 					else { topstring += "0,"; }
 					//if (index - 24 >= 0) {}
-					if (index - 1 >= 0 && mapstring.charAt(index - 1) == "0") { leftstring += "2,"; }
+					if (j != 0 && index - 1 >= 0 && mapstring.charAt(index - 1) == "0") { leftstring += "2,"; }
 					else { leftstring += "0,"; }
-					if (index + 1 <= 424 && mapstring.charAt(index + 1) == "0") { rightstring += "3,"; }
+					if (j != 24 && index + 1 <= 424 && mapstring.charAt(index + 1) == "0") { rightstring += "3,"; }
 					else { rightstring += "0,"; }
 					//if (index + 24 <= 424) {}
 					if (index + 25 <= 424 && mapstring.charAt(index + 25) == "0") { bottomstring += "4,"; }
@@ -95,28 +97,30 @@ package com.game.Metagame
 			rightstring += "\n";
 			bottomstring += "\n";
 			}
+			//helper object
 			var tilemap:FlxTilemap;
+			//used for tiles first
 			tilemap = new FlxTilemap;
-			tilemap.collideIndex = 1;
 			tilemap.loadMap(tilestring,ImgTiles,16);
 			tiles.add(tilemap);
-			//now reuse the delicious helper
+			//now reuse the delicious helper for the lines
+			//bottom is the bottom map
 			tilemap = new FlxTilemap;
-			tilemap.collideIndex = 1;
-			tilemap.loadMap(topstring,ImgLines,16);
-			tiles.add(tilemap);
-			tilemap = new FlxTilemap;
-			tilemap.collideIndex = 1;
-			tilemap.loadMap(leftstring,ImgLines,16);
-			tiles.add(tilemap);
-			tilemap = new FlxTilemap;
-			tilemap.collideIndex = 1;
-			tilemap.loadMap(rightstring,ImgLines,16);
-			tiles.add(tilemap);
-			tilemap = new FlxTilemap;
-			tilemap.collideIndex = 1;
+			tilemap.y = +1;
 			tilemap.loadMap(bottomstring,ImgLines,16);
-			tiles.add(tilemap);
+			decor.add(tilemap);
+			//left and right on top of that
+			tilemap = new FlxTilemap;
+			tilemap.loadMap(leftstring,ImgLines,16);
+			decor.add(tilemap);
+			tilemap = new FlxTilemap;
+			tilemap.loadMap(rightstring,ImgLines,16);
+			decor.add(tilemap);
+			//then the top on top
+			tilemap = new FlxTilemap;
+			tilemap.y = -1;
+			tilemap.loadMap(topstring,ImgLines,16);
+			decor.add(tilemap);
 			//--------------------------------------------------
 			
 			//-------MASK PROCESSING----------------------------
@@ -172,6 +176,7 @@ package com.game.Metagame
 			//--------------------------------------------------
 			add(BGMask);
 			add(tiles); //tiles behind objects
+			add(decor); //decor above tiles
 			add(objects);
 			add(FGMask);
 		}

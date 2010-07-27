@@ -77,8 +77,8 @@ package com.game.Metagame
 			//the player will have several states (standing, crouching, rolling etc) with different bounding boxes
 			//this probably shouldn't be a generic object
 			boxData = new Object();
-			boxData.stand = {w:15,h:30,ox:12,oy:4};
-			boxData.crouch = {w:15,h:15,ox:12,oy:20};
+			boxData.stand = {w:15,h:30,ox:12,oy:6}; //these changed due to the graphical changes
+			boxData.crouch = {w:15,h:15,ox:12,oy:21};
 			boxData.roll = {w:15,h:15,ox:12,oy:20};
 			
 			//set bounding box
