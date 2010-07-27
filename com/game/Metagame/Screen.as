@@ -54,20 +54,68 @@ package com.game.Metagame
 			//now initialise the string we're going to load
 			//into the FlxTileMap
 			tilestring = "";
+			var topstring:String = "";
+			var leftstring:String = "";
+			var rightstring:String = "";
+			var bottomstring:String = "";
 			//hooray, some iteration -_-;
 			//map is 25x17 for the record.
 			for (var i:Number=0;i-1<mapstring.length/17;i++) {
 			for (var j:Number=0;j<25;j++) 
 			{
+				var index:Number = ((i)*25)+j;
 				//put some processing in here once we're using more than 1 and 0
-				tilestring += mapstring.charAt(((i)*25)+j) + ",";
+				tilestring += mapstring.charAt(index) + ",";
+				if (mapstring.charAt(index) == "1")
+				{
+					//if (index - 26 >= 0) {}
+					if (index - 25 >= 0 && mapstring.charAt(index - 25) == "0") { topstring += "1,"; }
+					else { topstring += "0,"; }
+					//if (index - 24 >= 0) {}
+					if (index - 1 >= 0 && mapstring.charAt(index - 1) == "0") { leftstring += "2,"; }
+					else { leftstring += "0,"; }
+					if (index + 1 <= 424 && mapstring.charAt(index + 1) == "0") { rightstring += "3,"; }
+					else { rightstring += "0,"; }
+					//if (index + 24 <= 424) {}
+					if (index + 25 <= 424 && mapstring.charAt(index + 25) == "0") { bottomstring += "4,"; }
+					else { bottomstring += "0,"; }
+					//if (index + 26 <= 424) {}
+				}
+				else
+				{
+					topstring += "0,";
+					leftstring += "0,";
+					rightstring += "0,";
+					bottomstring += "0,";
+				}
 			}
 			tilestring += "\n";
+			topstring += "\n";
+			leftstring += "\n";
+			rightstring += "\n";
+			bottomstring += "\n";
 			}
 			var tilemap:FlxTilemap;
 			tilemap = new FlxTilemap;
 			tilemap.collideIndex = 1;
 			tilemap.loadMap(tilestring,ImgTiles,16);
+			tiles.add(tilemap);
+			//now reuse the delicious helper
+			tilemap = new FlxTilemap;
+			tilemap.collideIndex = 1;
+			tilemap.loadMap(topstring,ImgLines,16);
+			tiles.add(tilemap);
+			tilemap = new FlxTilemap;
+			tilemap.collideIndex = 1;
+			tilemap.loadMap(leftstring,ImgLines,16);
+			tiles.add(tilemap);
+			tilemap = new FlxTilemap;
+			tilemap.collideIndex = 1;
+			tilemap.loadMap(rightstring,ImgLines,16);
+			tiles.add(tilemap);
+			tilemap = new FlxTilemap;
+			tilemap.collideIndex = 1;
+			tilemap.loadMap(bottomstring,ImgLines,16);
 			tiles.add(tilemap);
 			//--------------------------------------------------
 			
