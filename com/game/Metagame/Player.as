@@ -2,46 +2,33 @@ package com.game.Metagame
 {
 	import org.flixel.*;
 
-	public class Player extends FlxSprite
+	public class Player extends DynamicObject
 	{
+	
 		[Embed(source="../../../data/robot.png")] private var ImgPlayer:Class;
 		
 		private var keys:Object;
 		private var inputThrust:FlxPoint;
 		private var airThrustMultiplier:Number;
 		private var crouching:Boolean;
-		private var onLeft:Boolean;
-		private var onRight:Boolean;
-		private var onTop:Boolean;
 		private var rolling:Boolean;
 		private var rollThrustMultiplier:Number;
 		private var rollBounce:Number;
 		private var crouchThrustMultiplier:Number;
 		private var crouchJumpMultiplier:Number;
-		private var groundDrag:Number;
-		private var airDrag:Number;
 		private var rollDrag:Number;
 		private var jumping:Boolean;
 		private var jumpTimer:Number; //variable that times the length of each jump
 		private var jumpDuration:Number;
-		private var gravity:Number; //should we have gravity be global or per-object?
-		private var boxData:Object; //bounding boxes list
 		private var gibs:FlxEmitter; //hooray! maybe use more than one, for more cinematic deaths.
-		private var level:Level; //allows it to access the level object.
-		
-		//Collision function
-		public var collideVsLevel:Function;
 		
 		public var travel:Object;
 		
 		public function Player(X:int,Y:int,lvl:Level)
 		{
-			super(X,Y);
+			super(X,Y,lvl);
 			loadGraphic(ImgPlayer,true,true,40,40);
-			
-			//The level reference
-			level = lvl;
-			
+						
 			//Travel, an object with BG/FG booleans to indicate ability to travel.
 			travel = new Object();
 			travel.FG = false;
@@ -248,17 +235,6 @@ package com.game.Metagame
 			super.updateFlickering();
 		}
 		
-		private function changeBoxes(stateID:String):void
-		{
-			var newState:Object = boxData[stateID];
-			y -= newState.h-height;
-			x -= (newState.w-width)/2;
-			width = newState.w;
-			height = newState.h;
-			offset.x = newState.ox;
-			offset.y = newState.oy;
-		}
-		
 		override public function hitBottom(Contact:FlxObject,Velocity:Number):void
 		{
 			//if(velocity.y > 50)
@@ -271,21 +247,6 @@ package com.game.Metagame
 			{
 				velocity.y = -velCache*rollBounce;
 			}
-		}
-		override public function hitLeft(Contact:FlxObject,Velocity:Number):void
-		{
-			onLeft=true;
-			super.hitLeft(Contact,Velocity);
-		}
-		override public function hitRight(Contact:FlxObject,Velocity:Number):void
-		{
-			onRight=true;
-			super.hitRight(Contact,Velocity);
-		}
-		override public function hitTop(Contact:FlxObject,Velocity:Number):void
-		{
-			onTop=true;
-			super.hitTop(Contact,Velocity);
 		}
 		override public function hitSide(Contact:FlxObject,Velocity:Number):void
 		{

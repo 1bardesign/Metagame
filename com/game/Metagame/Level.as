@@ -71,10 +71,7 @@ package com.game.Metagame
 			//--------PLAYER
 			
 			player = new Player(pStartPos[0],pStartPos[1],this);
-			player.collideVsLevel = function():void
-			{
-				FlxU.collide(curscreen.tiles,curscreen.objects);
-			}
+
 			curscreen.objects.add(player); //add it to the screen's objects!
 			//-----------------------DONE--------------------------------------
 			
